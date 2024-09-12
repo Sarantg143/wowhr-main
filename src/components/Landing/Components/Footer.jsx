@@ -3,6 +3,7 @@ import f2 from "../assets/Images/f2.jpg";
 import f3 from "../assets/Images/f3.jpg";
 import f4 from "../assets/Images/f4.jpg";
 import logo from "../assets/Images/WowHRLogo.png";
+import { db, collection, addDoc } from "../../firebase";
 import React, { useState } from "react";
 import {
   MapPin,
@@ -21,19 +22,44 @@ const Footer = () => {
   const [message, setMessage] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+//  const handleSubscribe = (e) => {
+//    e.preventDefault();
+
+//    if (email.trim() === "") {
+//      setMessage("Please enter a valid email.");
+//      return;
+ //   }
+
+ //   setMessage("Thanks for subscribing!");
+ //   setEmail("");
+ //   setIsSubscribed(true); 
+  //};
+
+  const saveSubscription = async () => {
+    try {
+      await addDoc(collection(db, "subscriptions"), {
+        email,
+        timestamp: new Date(),
+      });
+      setMessage("Thanks for subscribing!");
+      setIsSubscribed(true);
+      setEmail("");
+    } catch (error) {
+      console.error("Error saving subscription: ", error);
+      setMessage("There was an error. Please try again.");
+    }
+  };
+
+  
   const handleSubscribe = (e) => {
     e.preventDefault();
-
     if (email.trim() === "") {
       setMessage("Please enter a valid email.");
       return;
     }
-
-    setMessage("Thanks for subscribing!");
-    setEmail("");
-    setIsSubscribed(true); 
+    saveSubscription();
   };
-
+  
   return (
     <section
       id="footer"
